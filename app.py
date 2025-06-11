@@ -3,7 +3,6 @@ import pandas as pd
 import re
 from io import BytesIO
 
-@st.cache_data
 def infer_email_structure(emails):
     patterns = []
     for email in emails.dropna():

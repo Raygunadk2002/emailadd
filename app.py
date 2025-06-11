@@ -12,8 +12,14 @@ def infer_email_structure(emails):
             patterns.append(('fl' if last else 'f', domain))
     if patterns:
         common_pattern, domain = max(set(patterns), key=patterns.count)
-        return lambda f, l: f"{f.lower()}.{l.lower()}@{domain}" if common_pattern == 'fl' else lambda f, l: f"{f.lower()}@{domain}"
+        return common_pattern, domain
     return None
+
+def construct_email(common_pattern, domain, first, last):
+    if common_pattern == 'fl':
+        return f"{first.lower()}.{last.lower()}@{domain}"
+    else:
+        return f"{first.lower()}@{domain}"
 
 def fill_missing_emails(df):
     added_emails = []
@@ -21,10 +27,11 @@ def fill_missing_emails(df):
         company_emails = df[df['Company Name'] == company]['Person Email']
         email_structure = infer_email_structure(company_emails)
         if email_structure:
+            common_pattern, domain = email_structure
             missing_rows = df[(df['Company Name'] == company) & (df['Person Email'].isnull())]
             for idx, row in missing_rows.iterrows():
                 if pd.notnull(row['Person Forename']) and pd.notnull(row['Person Surname']):
-                    inferred_email = email_structure(row['Person Forename'], row['Person Surname'])
+                    inferred_email = construct_email(common_pattern, domain, row['Person Forename'], row['Person Surname'])
                     df.at[idx, 'Person Email'] = inferred_email
                     added_emails.append(idx)
     return df, added_emails

@@ -8,7 +8,7 @@ A simple Streamlit application that fills missing email addresses in CSV files b
 
 ```bash
 git clone <your-repo-link>
-cd email-gap-filler
+cd email-gap-filler-final
 ```
 
 ### Create a Virtual Environment

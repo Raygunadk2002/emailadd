@@ -48,10 +48,11 @@ if uploaded_file:
         filled_df, added_emails = fill_missing_emails(df)
         st.success(f"Filled {len(added_emails)} emails.")
         
-        def highlight_new_emails(val, idx):
-            return 'background-color: lightgreen' if val.name in idx else ''
+        def highlight_new_emails(row, added_emails):
+            return ['background-color: lightgreen' if row.name in added_emails and col == 'Person Email' else '' 
+                    for col in row.index]
 
-        st.write(filled_df.style.apply(lambda row: highlight_new_emails(row, added_emails), axis=1))
+        st.dataframe(filled_df.style.apply(lambda row: highlight_new_emails(row, added_emails), axis=1))
 
         buffer = BytesIO()
         filled_df.to_csv(buffer, index=False)
